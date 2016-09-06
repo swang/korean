@@ -47,13 +47,16 @@ $(document).ready(function() {
       $('div.result').addClass('incorrect').html('Incorrect! It is ' + kchar[k])
       $(this).css('background', 'red')
     }
-    setTimeout(() => {
+
+    setTimeout(function() {
       $(this).css('background', '')
-      $('div.result').removeClass('correct').removeClass('incorrect').html('Result');
-      nextOne();
+      $('div.result').removeClass('correct').removeClass('incorrect').html('Result')
+      nextOne()
     }, 500)
+
     var outta = correct.toString() + '/' + (correct + incorrect).toString()
-    $('div.score').html(outta + ' ' + ((correct/(correct+incorrect)*100).toFixed(2)) + '%')
+
+    $('div.score').html(outta + ' ' + (correct/(correct + incorrect) * 100).toFixed(2) + '%')
   })
 
 })
