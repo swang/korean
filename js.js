@@ -27,7 +27,7 @@ $(document).ready(function() {
     // var kk = pickOne(Object.keys(kchar))
     do {
       kk = pickOne(Object.keys(kchar))
-    } while (kk === k && kk === '')
+    } while (kk === k)
     k = kk
     $('div.centered').html(k)
   }
@@ -38,6 +38,7 @@ $(document).ready(function() {
   })
 
   $('div.answer').on('click', 'button', function() {
+    var self = $(this)
     if (kchar[k] === $(this).text()) {
       correct++
       $('div.result').addClass('correct').html('Correct!')
@@ -49,7 +50,7 @@ $(document).ready(function() {
     }
 
     setTimeout(function() {
-      $(this).css('background', '')
+      self.css('background', '')
       $('div.result').removeClass('correct').removeClass('incorrect').html('Result')
       nextOne()
     }, 500)
