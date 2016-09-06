@@ -34,7 +34,7 @@ $(document).ready(function() {
   nextOne();
 
   Object.keys(kchar).forEach(function(k) {
-    $('div.answer').append(`<button>${kchar[k]}</button>`);
+    $('div.answer').append('<button>' + kchar[k] + '</button>');
   })
 
   $('div.answer').on('click', 'button', function() {
@@ -52,7 +52,7 @@ $(document).ready(function() {
       $('div.result').removeClass('correct').removeClass('incorrect').html('Result');
       nextOne();
     }, 500)
-    $('div.score').html(`${correct} / ${correct+incorrect} (${(correct/(correct+incorrect)*100).toFixed(2)}%)`)
+    $('div.score').html(correct / (correct+incorrect) + ' ' + ((correct/(correct+incorrect)*100).toFixed(2)) + '%')
   })
 
 })
