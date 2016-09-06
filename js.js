@@ -19,12 +19,12 @@ $(document).ready(function() {
   function pickOne(ary) {
     return ary[~~(Math.random() * ary.length)]
   }
-  let correct = 0;
-  let incorrect = 0;
-  let k
+  var correct = 0;
+  var incorrect = 0;
+  var k
 
   function nextOne() {
-    // let kk = pickOne(Object.keys(kchar))
+    // var kk = pickOne(Object.keys(kchar))
     do {
       kk = pickOne(Object.keys(kchar))
     } while (kk === k && kk === '')
@@ -52,7 +52,8 @@ $(document).ready(function() {
       $('div.result').removeClass('correct').removeClass('incorrect').html('Result');
       nextOne();
     }, 500)
-    $('div.score').html(correct / (correct+incorrect) + ' ' + ((correct/(correct+incorrect)*100).toFixed(2)) + '%')
+    var outta = correct.toString() + '/' + (correct + incorrect).toString()
+    $('div.score').html(outta + ' ' + ((correct/(correct+incorrect)*100).toFixed(2)) + '%')
   })
 
 })
