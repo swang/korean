@@ -3,31 +3,53 @@
 var correct = parseInt(window.localStorage.getItem('correct')) || 0;
 var incorrect = parseInt(window.localStorage.getItem('incorrect')) || 0;
 
+const kchar = {
+  'ㄱ': 'k',
+  'ㄴ': 'n',
+  'ㄷ': 'd',
+  'ㄹ': 'l',
+  'ㅁ': 'm',
+  'ㅂ': 'b',
+  'ㅅ': 's',
+  'ㅈ': 'j',
+  'ㅎ': 'h',
+  'ㅣ': 'i',
+  'ㅏ': 'a',
+  'ㅓ': 'eo',
+  'ㅡ': 'eu',
+  'ㅜ': 'u',
+  'ㅗ': 'o',
+}
+
 function updateScore() {
   $('div.score').html(correct.toString() + '/' + (correct + incorrect) + ' ' + (correct/(correct + incorrect) * 100).toFixed(2) + '%')
 }
 
+function shuffle(arr) {
+  var rnd, tmp
+  for (var i = 0; i < arr.length; i++) {
+    rnd = i + ~~(Math.random() * (arr.length - i))
+    tmp = arr[rnd]
+    arr[rnd] = arr[i]
+    arr[i] = tmp
+  }
+  return arr
+}
+
+function redrawBtns() {
+  var order = shuffle(Object.keys(kchar))
+  var html = []
+  order.forEach(function(k) {
+    html.push('<button>' + kchar[k] + '</button>')
+  })
+  $('div.answer').html(html.join(''))
+}
+
+function pickOne(ary) {
+  return ary[~~(Math.random() * ary.length)]
+}
+
 $(document).ready(function() {
-  const kchar = {
-    'ㄱ': 'k',
-    'ㄴ': 'n',
-    'ㄷ': 'd',
-    'ㄹ': 'l',
-    'ㅁ': 'm',
-    'ㅂ': 'b',
-    'ㅅ': 's',
-    'ㅈ': 'j',
-    'ㅎ': 'h',
-    'ㅣ': 'i',
-    'ㅏ': 'a',
-    'ㅓ': 'eo',
-    'ㅡ': 'eu',
-    'ㅜ': 'u',
-    'ㅗ': 'o',
-  }
-  function pickOne(ary) {
-    return ary[~~(Math.random() * ary.length)]
-  }
   var k
 
   function nextOne() {
@@ -40,10 +62,6 @@ $(document).ready(function() {
   }
   nextOne();
 
-  Object.keys(kchar).forEach(function(k) {
-    $('div.answer').append('<button>' + kchar[k] + '</button>');
-  })
-
   $('div.answer').on('click', 'button', function() {
     var self = $(this)
     if (kchar[k] === $(this).text()) {
@@ -55,7 +73,6 @@ $(document).ready(function() {
       incorrect++
       window.localStorage.setItem('incorrect', incorrect)
       $('div.result').addClass('incorrect').html('Incorrect! It is: ' + kchar[k])
-
       $(this).css('background', 'red')
     }
 
@@ -65,7 +82,9 @@ $(document).ready(function() {
       nextOne()
     }, 500)
 
+    redrawBtns()
     updateScore()
   })
+  redrawBtns()
   updateScore()
 })
