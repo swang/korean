@@ -60,7 +60,6 @@ $(document).ready(function() {
     k = kk
     $('div.centered').html(k)
   }
-  nextOne();
 
   $('div.answer').on('click', 'button', function() {
     var self = $(this)
@@ -85,6 +84,19 @@ $(document).ready(function() {
     redrawBtns()
     updateScore()
   })
+  $('button.clear').on('click', function() {
+    if (confirm('Are you sure you want to clear scores?')) {
+      correct = 0
+      incorrect = 0
+      window.localStorage.setItem('correct', 0)
+      window.localStorage.setItem('incorrect', 0)
+      redrawBtns()
+      updateScore()
+
+    }
+  })
+
+  nextOne()
   redrawBtns()
   updateScore()
 })
