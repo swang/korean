@@ -3,7 +3,7 @@
 var correct = parseInt(window.localStorage.getItem('correct')) || 0;
 var incorrect = parseInt(window.localStorage.getItem('incorrect')) || 0;
 
-const kchar = {
+var kchar = {
   'ㄱ': 'k',
   'ㄴ': 'n',
   'ㄷ': 'd',
