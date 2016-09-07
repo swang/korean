@@ -79,10 +79,10 @@ $(document).ready(function() {
       self.css('background', '')
       $('div.result').removeClass('correct').removeClass('incorrect').html('Result')
       nextOne()
+      redrawBtns()
+      updateScore()
     }, 500)
 
-    redrawBtns()
-    updateScore()
   })
   $('button.clear').on('click', function() {
     if (confirm('Are you sure you want to clear scores?')) {
