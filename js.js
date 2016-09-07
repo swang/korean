@@ -22,7 +22,8 @@ var kchar = {
 }
 
 function updateScore() {
-  $('div.score').html(correct.toString() + '/' + (correct + incorrect) + ' ' + (correct/(correct + incorrect) * 100).toFixed(2) + '%')
+  var perc = (correct/(correct + incorrect) * 100).toFixed(2) + '%'
+  $('div.score').html(correct.toString() + '/' + (correct + incorrect) + ' ' + (isNaN(perc) ? '0%' : perc))
 }
 
 function shuffle(arr) {
