@@ -2,7 +2,7 @@
    v2.0 | 20110126
    License: none (public domain)
 */
-
+* { box-sizing: border-box }
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -62,33 +62,96 @@ div.answer button {
   font-weight: bold;
 }
 
-.result {
-  margin: 5px;
-  padding: 5px;
-  border: 5px solid black;
-}
-.correct {
-  background: green;
-  border: 5px solid darkgreen;
-}
-.incorrect {
-  background: red;
-  border: 5px solid darkred;
-}
-.score {
-  padding: 5px;
-  font-size: 30px;
-  text-align: center;
-}
-
 .title {
   font-size: 30px;
   text-align: center;
   padding: 5px;
   margin: 5px;
 }
-button.clear {
+button {
   border: 1px solid;
-  padding: 5px;
+  padding: 15px 30px;
   margin: 5px;
+}
+button.submit {
+
+}
+
+div.styling {
+  display: flex;
+}
+
+div.result {
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 5px;
+  font-size: 20px;
+  padding: 20px 20px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  background-color: white;
+  border: 5px solid black;
+}
+
+div.result:before {
+  position: relative;
+  top: -10px;
+  left: -6px;
+  margin-bottom: 25px;
+  content: "?";
+}
+
+div.result.correct {
+  border: 5px solid darkgreen;
+  background-color: green;
+  content: "✔";
+}
+div.result.correct:before {
+  content: "✔";
+}
+div.result.incorrect {
+  border: 5px solid darkred;
+  background: red;
+}
+div.result.incorrect:before {
+  content: "✖";
+}
+
+div.score {
+  padding: 5px;
+  font-size: 30px;
+  text-align: center;
+  margin-right: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+div.input-bar {
+  margin: auto;
+  border: 1px solid black;
+  flex-grow: 1;
+  padding: 2px 2px;
+  margin: 5px;
+}
+div.input-block {
+  flex: 1;
+  display: inline-table;
+  border: 1px solid black;
+  background: #a0a0a0;
+  padding: 5px;
+  margin: auto 2px auto auto;
+  font-size: 24px;
+  vertical-align: middle;
+  align-items: center;
+}
+
+button.clear-input {
+  float: right;
+  height: calc(100% - (5 * 2px));
+  background: lightgrey;
+  padding: 2px 5px;
+  margin: 5px;
+
 }
