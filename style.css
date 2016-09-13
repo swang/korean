@@ -47,17 +47,23 @@ table {
   border-spacing: 0;
 }
 
-.centered {
-  font-size: 145px;
+div.styling {
+  font-size: 20px;
+}
+
+div.centered {
   text-align: center;
-  padding: 20px;
+  font-weight: bolder;
+  padding: 15px 30px;
+  margin: 5px auto;
+  border: 1px solid black;
 }
 
 div.answer button {
   padding: 5px;
   border: 1px solid black;
-  margin: 5px;
-  min-width: 70px;
+  margin: 4px;
+  min-width: 60px;
   font-size: 20px;
   font-weight: bold;
 }
@@ -146,12 +152,6 @@ div.input-block {
   vertical-align: middle;
   align-items: center;
 }
-
-button.clear-input {
-  float: right;
-  height: calc(100% - (5 * 2px));
-  background: lightgrey;
-  padding: 2px 5px;
-  margin: 5px;
-
+button.clear {
+  margin-left: auto;
 }

@@ -63,10 +63,11 @@ function shuffle(arr) {
 }
 
 function redrawBtns() {
-  var order = shuffle(Object.keys(kconst).concat(Object.keys(kvowel)))
+  // var order = shuffle(Object.keys(kcombo))
+  var order = Object.keys(kcombo)
   var html = []
   order.forEach(function(k) {
-    html.push('<button>' + (kconst[k] || kvowel[k]) + '</button>')
+    html.push('<button>' + (k) + '</button>')
   })
   $('div.answer').html(html.join(''))
 }
@@ -84,41 +85,45 @@ $(document).ready(function() {
       kk = pickOne(Object.keys(kcombo))
     } while (kk === k)
     k = kk
-    $('div.centered').html(k)
-    $('div.input-bar').html('<button class="clear-input">x</button>')
   }
-
+  function loadAudio(hangul) {
+    $('audio > source').attr('src', 'mp3/' + kcombo[hangul] + '.mp3')
+    $('audio')[0].load()
+    $('audio')[0].play()
+  }
   $('div.answer').on('click', 'button', function() {
-    $('div.input-bar').append('<div class="input-block">' + $(this).text() + '</div>')
-  })
-
-  $('div.input-bar').on('click', ' button.clear-input', function() {
-    $('div.input-bar').html('<button class="clear-input">x</button>')
-  })
-
-  $('button.submit').on('click', function() {
-    var self = $(this)
-    if (kcombo[k] === $('.input-block').text()) {
+    // console.log(k, $(this).text(), kcombo[$(this).text()], '::', $('audio > source').attr('src'))
+    if (k === $(this).text()) {
       correct++
       window.localStorage.setItem('correct', correct)
       $('div.result').addClass('correct').removeClass('incorrect')
-      // $(this).css('background', 'green')
     } else {
       incorrect++
       window.localStorage.setItem('incorrect', incorrect)
       $('div.result').addClass('incorrect').removeClass('correct')
-      // $(this).css('background', 'red')
     }
+    $('div.centered').html(k)
 
     setTimeout(function() {
-      // self.css('background', '')
       $('div.result').removeClass('correct').removeClass('incorrect')
+      // $('div.centered').html('')
       nextOne()
       redrawBtns()
       updateScore()
     }, 700)
 
+
   })
+  $('audio').on('ended', function() {
+    console.log('audio over');
+    $('#play-button').removeAttr('disabled');
+  })
+
+  $('#play-button').on('click', function() {
+    loadAudio(k)
+    $('#play-button').attr('disabled', '');
+  })
+
   $('button.clear').on('click', function() {
     if (confirm('Are you sure you want to clear scores?')) {
       correct = 0
