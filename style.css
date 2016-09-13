@@ -60,9 +60,9 @@ div.centered {
 }
 
 div.answer button {
-  padding: 5px;
+  padding: 4px;
   border: 1px solid black;
-  margin: 4px;
+  margin: 2px;
   min-width: 60px;
   font-size: 20px;
   font-weight: bold;
@@ -111,7 +111,7 @@ div.result:before {
 
 div.result.correct {
   border: 5px solid darkgreen;
-  background-color: green;
+  background: green;
   content: "✔";
 }
 div.result.correct:before {
