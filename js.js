@@ -92,25 +92,35 @@ $(document).ready(function() {
     $('audio')[0].play()
   }
   $('div.answer').on('click', 'button', function() {
+    var btn = $(this)
     // console.log(k, $(this).text(), kcombo[$(this).text()], '::', $('audio > source').attr('src'))
-    if (k === $(this).text()) {
+    if (k === btn.text()) {
       correct++
       window.localStorage.setItem('correct', correct)
       $('div.result').addClass('correct').removeClass('incorrect')
+      $(this).addClass('correct')
     } else {
       incorrect++
+
+      btn = $('div.answer button').filter(function(idx, _btn) {
+        return (k === _btn.innerText)
+      }).addClass('incorrect')
+
       window.localStorage.setItem('incorrect', incorrect)
       $('div.result').addClass('incorrect').removeClass('correct')
     }
     $('div.centered').html(k)
 
-    setTimeout(function() {
-      $('div.result').removeClass('correct').removeClass('incorrect')
-      // $('div.centered').html('')
-      nextOne()
-      redrawBtns()
-      updateScore()
-    }, 700)
+    setTimeout(function(btn) {
+      return function() {
+        $('div.result').removeClass('correct').removeClass('incorrect')
+        btn.removeClass('correct').removeClass('incorrect')
+        // $('div.centered').html('')
+        nextOne()
+        redrawBtns()
+        updateScore()
+      }
+    }(btn), 700)
 
 
   })
