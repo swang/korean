@@ -104,7 +104,7 @@ $(document).ready(function() {
       loadAudio($(this).text())
     })
   }
-  if (pn === 'index.html') {
+  if (pn === 'index.html' || pn === '') {
 
     $('div.answer').on('click', 'button', function() {
       var btn = $(this)
@@ -166,12 +166,12 @@ $(document).ready(function() {
     redrawBtns()
   }
 
-  $('body').on('click', '.dropdown', function() {
+  $('body').on('touchstart taphold', '.dropdown', function() {
     $(this).toggleClass('active');
     var active = $(this).find(".active").detach();
     active.appendTo($(this))
   })
-  $('body').on('click', '.dropdown > .label', function() {
+  $('body').on('touchstart tap', '.dropdown > .label', function() {
     if ($(this).attr('data-url')) {
       window.location = $(this).attr('data-url')
     }
@@ -185,7 +185,7 @@ function drawDropdown(curPage) {
   $('body div.dropdown').remove();
   $('body').append('<div class="dropdown"></div>');
   ;[['sb.html', 'Sound Board'], ['index.html', 'Listen Quiz']].forEach(function(p) {
-    if (p[0] === curPage) {
+    if (p[0] === curPage || (p[0] === 'index.html' && curPage === '')) {
       $('.dropdown').append('<div class="label active">' + p[1] + '</div>')
     } else {
       $('.dropdown').append('<div data-url="' + p[0] + '" class="label">' + p[1] + '</div>')
