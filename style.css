@@ -30,6 +30,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
   line-height: 1;
+  padding-bottom: 50px;
 }
 ol, ul {
   list-style: none;
@@ -85,9 +86,6 @@ button {
   border: 1px solid;
   padding: 15px 30px;
   margin: 5px;
-}
-button.submit {
-
 }
 
 div.styling {
@@ -169,6 +167,8 @@ button.clear {
   bottom: 0px;
   padding: 0px 0px;
   border: 1px solid black;
+  background-color: white;
+  position: fixed;
 }
 .dropdown.active .label:nth-child(1) {
 
