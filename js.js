@@ -4,12 +4,13 @@ var correct = parseInt(window.localStorage.getItem('correct')) || 0;
 var incorrect = parseInt(window.localStorage.getItem('incorrect')) || 0;
 
 var kconst = {
-  // 'ㅂ': 'b',
+  'ㅂ': 'b',
+  'ᄑ': 'p',
   'ㅈ': 'j',
   // 'ㄷ': 'd',
   // 'ㄱ': 'k',
   'ㅅ': 's',
-  // 'ㅁ': 'm',
+  'ㅁ': 'm',
   // 'ㄴ': 'n',
   // 'ㅎ': 'h',
   // 'ㄹ': 'l',
@@ -29,13 +30,14 @@ var kvowel = {
 }
 
 var _kcombos = [
-  // '비', '바', '버', '브', '부', '보',
+  '비', '바', '버', '뱌', '벼', '브', '보', '부', '뵤', '뷰',
+  '피', '파', '퍼', '퍄', '펴', '프', '포', '푸', '퓨', '표',
 
   '지', '자', '저', '쟈', '져', '즈', '조', '주', '죠', '쥬',
   // '디', '다', '더', '드', '두', '도',
   // '기', '가', '거', '그', '구', '고',
   '시', '사', '서', '샤', '셔', '스', '소', '수', '쇼', '슈',
-  // '미', '마', '머', '므', '무', '모',
+  '미', '마', '머', '먀', '며', '므', '모', '무', '묘', '뮤',
   // '니', '나', '너', '느', '누', '노',
   // '히', '하', '허', '흐', '후', '호',
   // '리', '라', '러', '르', '루', '로',
@@ -166,22 +168,20 @@ $(document).ready(function() {
     redrawBtns()
   }
 
-  $('body').on('touchstart taphold', '.dropdown', function() {
-    $(this).toggleClass('active');
-    var active = $(this).find(".active").detach();
-    active.appendTo($(this))
-  })
-  $('body').on('touchstart tap', '.dropdown > .label', function() {
-    if ($(this).attr('data-url')) {
-      window.location = $(this).attr('data-url')
-    }
+  $('body').on('touchstart taphold click', '.dropdown', function() {
+      $(this).toggleClass('active');
+      var active = $(this).find(".active").detach();
+      active.appendTo($(this))
+    }).on('touchstart tap click', '.dropdown > .label', function() {
+      if ($(this).attr('data-url')) {
+        window.location = $(this).attr('data-url')
+      }
   })
 
   drawDropdown(pn)
 })
 
 function drawDropdown(curPage) {
-  // console.log(curPage)
   $('body div.dropdown').remove();
   $('body').append('<div class="dropdown"></div>');
   ;[['sb.html', 'Sound Board'], ['index.html', 'Listen Quiz']].forEach(function(p) {
