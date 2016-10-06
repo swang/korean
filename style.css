@@ -72,7 +72,7 @@ div.answer button {
   min-width: 60px;
   font-size: 20px;
   font-weight: bold;
-  width: calc(100% * (1/10) - 7px - 7px);
+  width: calc(100% * (1/5) - 7px - 7px);
 }
 
 .title {
@@ -161,4 +161,39 @@ div.input-block {
 }
 button.clear {
   margin-left: auto;
+}
+
+.dropdown {
+  width: 50%;
+  position: absolute;
+  bottom: 0px;
+  padding: 0px 0px;
+  border: 1px solid black;
+}
+.dropdown.active .label:nth-child(1) {
+
+}
+.dropdown.active .label + .label {
+  border-top: 1px solid black;
+}
+.dropdown.active .label:last-child:after {
+  content: '⬆';
+  float: right;
+}
+
+.dropdown .label.active:after {
+  content: '⬇';
+  float: right;
+}
+.dropdown.active .label {
+  display: block;
+  padding: 10px;
+}
+
+.dropdown .label {
+  display: none;
+}
+.dropdown .label.active {
+  display: block;
+  padding: 10px;
 }

@@ -85,7 +85,7 @@ function pickOne(ary) {
 
 $(document).ready(function() {
   var k
-
+  var pn = window.location.pathname.split("/").slice(-1)[0]
   function nextOne() {
     var kk
     do {
@@ -98,62 +98,98 @@ $(document).ready(function() {
     $('audio')[0].load()
     $('audio')[0].play()
   }
-  $('div.answer').on('click', 'button', function() {
-    var btn = $(this)
-    // console.log(k, $(this).text(), kcombo[$(this).text()], '::', $('audio > source').attr('src'))
-    if (k === btn.text()) {
-      correct++
-      window.localStorage.setItem('correct', correct)
-      $('div.result').addClass('correct').removeClass('incorrect')
-      $(this).addClass('correct')
-    } else {
-      incorrect++
+  if (pn === 'sb.html') {
+    redrawBtns();
+    $('div.answer').on('click', 'button', function() {
+      loadAudio($(this).text())
+    })
+  }
+  if (pn === 'index.html') {
 
-      btn = $('div.answer button').filter(function(idx, _btn) {
-        return (k === _btn.innerText)
-      }).addClass('incorrect')
+    $('div.answer').on('click', 'button', function() {
+      var btn = $(this)
+      // console.log(k, $(this).text(), kcombo[$(this).text()], '::', $('audio > source').attr('src'))
+      if (k === btn.text()) {
+        correct++
+        window.localStorage.setItem('correct', correct)
+        $('div.result').addClass('correct').removeClass('incorrect')
+        $(this).addClass('correct')
+      } else {
+        incorrect++
 
-      window.localStorage.setItem('incorrect', incorrect)
-      $('div.result').addClass('incorrect').removeClass('correct')
-    }
-    $('div.centered').html(k)
+        btn = $('div.answer button').filter(function(idx, _btn) {
+          return (k === _btn.innerText)
+        }).addClass('incorrect')
 
-    setTimeout(function(btn) {
-      return function() {
-        $('div.result').removeClass('correct').removeClass('incorrect')
-        btn.removeClass('correct').removeClass('incorrect')
-        // $('div.centered').html('')
-        nextOne()
+        window.localStorage.setItem('incorrect', incorrect)
+        $('div.result').addClass('incorrect').removeClass('correct')
+      }
+      $('div.centered').html(k)
+
+      setTimeout(function(btn) {
+        return function() {
+          $('div.result').removeClass('correct').removeClass('incorrect')
+          btn.removeClass('correct').removeClass('incorrect')
+          // $('div.centered').html('')
+          nextOne()
+          redrawBtns()
+          updateScore()
+        }
+      }(btn), 700)
+
+
+    })
+    $('audio').on('ended', function() {
+      console.log('audio over');
+      $('#play-button').removeAttr('disabled');
+    })
+
+    $('#play-button').on('click', function() {
+      loadAudio(k)
+      $('#play-button').attr('disabled', '');
+    })
+
+    $('button.clear').on('click', function() {
+      if (confirm('Are you sure you want to clear scores?')) {
+        correct = 0
+        incorrect = 0
+        window.localStorage.setItem('correct', 0)
+        window.localStorage.setItem('incorrect', 0)
         redrawBtns()
         updateScore()
+
       }
-    }(btn), 700)
+    })
 
+    nextOne()
+    updateScore()
+    redrawBtns()
+  }
 
+  $('body').on('click', '.dropdown', function() {
+    $(this).toggleClass('active');
+    var active = $(this).find(".active").detach();
+    active.appendTo($(this))
   })
-  $('audio').on('ended', function() {
-    console.log('audio over');
-    $('#play-button').removeAttr('disabled');
-  })
-
-  $('#play-button').on('click', function() {
-    loadAudio(k)
-    $('#play-button').attr('disabled', '');
-  })
-
-  $('button.clear').on('click', function() {
-    if (confirm('Are you sure you want to clear scores?')) {
-      correct = 0
-      incorrect = 0
-      window.localStorage.setItem('correct', 0)
-      window.localStorage.setItem('incorrect', 0)
-      redrawBtns()
-      updateScore()
-
+  $('body').on('click', '.dropdown > .label', function() {
+    if ($(this).attr('data-url')) {
+      window.location = $(this).attr('data-url')
     }
   })
 
-  nextOne()
-  redrawBtns()
-  updateScore()
+  drawDropdown(pn)
 })
+
+function drawDropdown(curPage) {
+  // console.log(curPage)
+  $('body div.dropdown').remove();
+  $('body').append('<div class="dropdown"></div>');
+  ;[['sb.html', 'Sound Board'], ['index.html', 'Listen Quiz']].forEach(function(p) {
+    if (p[0] === curPage) {
+      $('.dropdown').append('<div class="label active">' + p[1] + '</div>')
+    } else {
+      $('.dropdown').append('<div data-url="' + p[0] + '" class="label">' + p[1] + '</div>')
+    }
+  })
+
+}
