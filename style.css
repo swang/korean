@@ -114,7 +114,7 @@ div.result:before {
   content: "?";
 }
 
-.correct {
+div.correct {
   border: 5px solid darkgreen;
   background: green;
   content: "✔";
@@ -122,7 +122,7 @@ div.result:before {
 div.result.correct:before {
   content: "✔";
 }
-.incorrect {
+div.incorrect {
   border: 5px solid darkred;
   background: red;
 }

@@ -1,195 +1,315 @@
 'use strict';
 
-var correct = parseInt(window.localStorage.getItem('correct')) || 0;
-var incorrect = parseInt(window.localStorage.getItem('incorrect')) || 0;
+function pickOne(ary) {
+  return ary[~~(Math.random() * ary.length)]
+}
 
 var kconst = {
-  'ㅂ': 'b',
-  'ᄑ': 'p',
-  'ㅈ': 'j',
+  0x1107: 'b', // 'ㅂ'
+  0x1111: 'p', // 'ᄑ'
+  0x110c: 'j', // 'ㅈ'
   // 'ㄷ': 'd',
   // 'ㄱ': 'k',
-  'ㅅ': 's',
-  'ㅁ': 'm',
+  0x1109: 's', // 'ㅅ'
+  0x1106: 'm', // 'ㅁ'
   // 'ㄴ': 'n',
   // 'ㅎ': 'h',
   // 'ㄹ': 'l',
-  'ㅊ': 'ch',
+  0x110e: 'ch', // 'ㅊ'
 }
+
 var kvowel = {
-  'ㅣ': 'i',
-  'ㅏ': 'a',
-  'ㅓ': 'eo',
-  'ㅑ': 'ya',
-  'ㅕ': 'yeo',
-  'ㅡ': 'eu',
-  'ㅗ': 'o',
-  'ㅜ': 'u',
-  'ㅛ': 'yo',
-  'ㅠ': 'yu',
+  0x1175: 'i', //'ㅣ'
+  0x1161: 'a', //'ㅏ'
+  0x1165: 'eo', //'ㅓ'
+  0x1163: 'ya', //'ㅑ'
+  0x1167: 'yeo', //'ㅕ'
+  0x1173: 'eu', //'ㅡ'
+  0x1169: 'o', //'ㅗ'
+  0x116e: 'u', //'ㅜ'
+  0x116d: 'yo', //'ㅛ'
+  0x1172: 'yu', //'ㅠ'
 }
-
-var _kcombos = [
-  '비', '바', '버', '뱌', '벼', '브', '보', '부', '뵤', '뷰',
-  '피', '파', '퍼', '퍄', '펴', '프', '포', '푸', '퓨', '표',
-
-  '지', '자', '저', '쟈', '져', '즈', '조', '주', '죠', '쥬',
-  // '디', '다', '더', '드', '두', '도',
-  // '기', '가', '거', '그', '구', '고',
-  '시', '사', '서', '샤', '셔', '스', '소', '수', '쇼', '슈',
-  '미', '마', '머', '먀', '며', '므', '모', '무', '묘', '뮤',
-  // '니', '나', '너', '느', '누', '노',
-  // '히', '하', '허', '흐', '후', '호',
-  // '리', '라', '러', '르', '루', '로',
-  '치', '차', '처', '챠', '쳐', '츠', '초', '추', '쵸', '츄',
-]
-
 var count = 0
 var kcombo = {}
 
 // use javascript predicted ordering of keys to combine constants/vowels
 Object.keys(kconst).forEach(function(c) {
   Object.keys(kvowel).forEach(function(v) {
-    kcombo[_kcombos[count]] = kconst[c] + kvowel[v]
+    kcombo[String.fromCharCode(c, v)] = kconst[c] + kvowel[v]
     count++
   })
 })
 
-function updateScore() {
-  var perc = (correct/(correct + incorrect) * 100).toFixed(2)
-  $('div.score').html(correct.toString() + '/' + (correct + incorrect) + ' ' + (isNaN(perc) ? '0' : perc) + '%')
-}
-
-function shuffle(arr) {
-  var rnd, tmp
-  for (var i = 0; i < arr.length; i++) {
-    rnd = i + ~~(Math.random() * (arr.length - i))
-    tmp = arr[rnd]
-    arr[rnd] = arr[i]
-    arr[i] = tmp
-  }
-  return arr
-}
-
-function redrawBtns() {
-  // var order = shuffle(Object.keys(kcombo))
-  var order = Object.keys(kcombo)
-  var html = []
-  order.forEach(function(k) {
-    html.push('<button>' + (k) + '</button>')
-  })
-  $('div.answer').html(html.join(''))
-}
-
-function pickOne(ary) {
-  return ary[~~(Math.random() * ary.length)]
-}
-
-$(document).ready(function() {
-  var k
-  var pn = window.location.pathname.split("/").slice(-1)[0]
-  function nextOne() {
-    var kk
-    do {
-      kk = pickOne(Object.keys(kcombo))
-    } while (kk === k)
-    k = kk
-  }
-  function loadAudio(hangul) {
-    $('audio > source').attr('src', 'mp3/' + kcombo[hangul] + '.mp3')
-    $('audio')[0].load()
-    $('audio')[0].play()
-  }
-  if (pn === 'sb.html') {
-    redrawBtns();
-    $('div.answer').on('click', 'button', function() {
-      loadAudio($(this).text())
+var eventBus = new Vue({
+  data: {
+    hangul: '',
+    romanji: '',
+    kcomboKeys: Object.keys(kcombo),
+    correct: 0,
+    incorrect: 0,
+    route: '',
+  },
+  methods: {
+    nextOne: function() {
+      var kk
+      do {
+        kk = pickOne(this.kcomboKeys)
+      } while (kk === this.hangul)
+      this.hangul = kk
+      this.romanji = kcombo[kk]
+      return this.hangul
+    }
+  },
+  created: function() {
+    var self = this
+    this.correct = parseInt(window.localStorage.getItem('correct'), 10) || 0
+    this.incorrect = parseInt(window.localStorage.getItem('incorrect'), 10) || 0
+    this.$emit('updatescore', this.correct, this.incorrect)
+    this.$on('correct', function() {
+      window.localStorage.setItem('correct', self.correct + 1)
+      self.nextOne()
     })
-  }
-  if (pn === 'index.html' || pn === '') {
-
-    $('div.answer').on('click', 'button', function() {
-      var btn = $(this)
-      // console.log(k, $(this).text(), kcombo[$(this).text()], '::', $('audio > source').attr('src'))
-      if (k === btn.text()) {
-        correct++
-        window.localStorage.setItem('correct', correct)
-        $('div.result').addClass('correct').removeClass('incorrect')
-        $(this).addClass('correct')
-      } else {
-        incorrect++
-
-        btn = $('div.answer button').filter(function(idx, _btn) {
-          return (k === _btn.innerText)
-        }).addClass('incorrect')
-
-        window.localStorage.setItem('incorrect', incorrect)
-        $('div.result').addClass('incorrect').removeClass('correct')
-      }
-      $('div.centered').html(k)
-
-      setTimeout(function(btn) {
-        return function() {
-          $('div.result').removeClass('correct').removeClass('incorrect')
-          btn.removeClass('correct').removeClass('incorrect')
-          // $('div.centered').html('')
-          nextOne()
-          redrawBtns()
-          updateScore()
-        }
-      }(btn), 700)
-
-
-    })
-    $('audio').on('ended', function() {
-      console.log('audio over');
-      $('#play-button').removeAttr('disabled');
+    this.$on('incorrect', function() {
+      window.localStorage.setItem('incorrect', this.incorrect + 1)
+      self.nextOne()
     })
 
-    $('#play-button').on('click', function() {
-      loadAudio(k)
-      $('#play-button').attr('disabled', '');
+    this.$on('updatescore', function(correct, incorrect) {
+      self.correct = correct
+      self.incorrect = incorrect
+      window.localStorage.setItem('correct', correct)
+      window.localStorage.setItem('incorrect', incorrect)
     })
 
-    $('button.clear').on('click', function() {
-      if (confirm('Are you sure you want to clear scores?')) {
-        correct = 0
-        incorrect = 0
-        window.localStorage.setItem('correct', 0)
-        window.localStorage.setItem('incorrect', 0)
-        redrawBtns()
-        updateScore()
-
-      }
-    })
-
-    nextOne()
-    updateScore()
-    redrawBtns()
+    this.nextOne();
   }
-
-  $('body').on('touchstart taphold click', '.dropdown', function() {
-      $(this).toggleClass('active');
-      var active = $(this).find(".active").detach();
-      active.appendTo($(this))
-    }).on('touchstart tap click', '.dropdown > .label', function() {
-      if ($(this).attr('data-url')) {
-        window.location = $(this).attr('data-url')
-      }
-  })
-
-  drawDropdown(pn)
 })
 
-function drawDropdown(curPage) {
-  $('body div.dropdown').remove();
-  $('body').append('<div class="dropdown"></div>');
-  ;[['sb.html', 'Sound Board'], ['index.html', 'Listen Quiz']].forEach(function(p) {
-    if (p[0] === curPage || (p[0] === 'index.html' && curPage === '')) {
-      $('.dropdown').append('<div class="label active">' + p[1] + '</div>')
-    } else {
-      $('.dropdown').append('<div data-url="' + p[0] + '" class="label">' + p[1] + '</div>')
+Vue.component('play-button', {
+  template: '<button id="play-button" v-on:click="click">Play</button>',
+  methods: {
+    click: function(e) {
+      eventBus.$emit('play', eventBus.romanji);
     }
-  })
+  }
+})
 
-}
+Vue.component('clear-button', {
+  template: '<button v-on:click="click" class="clear">Clear Score</button>',
+  methods: {
+    click: function(e) {
+      if (confirm('Are you sure you want to clear scores?')) {
+        eventBus.$emit('updatescore', 0, 0);
+      }
+    }
+  }
+})
+
+Vue.component('audio-player', {
+  data: function() {
+    return {
+      src: ''
+    }
+  },
+  created: function() {
+    var self = this
+    eventBus.$on('play', function(audio) {
+      self.src = 'mp3/' + audio +'.mp3'
+      self.$el.load()
+      self.$el.play()
+    })
+  },
+  template: '<audio ref="audio"><source v-bind:src="src" type="audio/mpeg"></audio>'
+})
+Vue.component('result-item', {
+  data: function() {
+    return {
+      classCss: {
+        correct: false,
+        incorrect: false
+      },
+    }
+  },
+  mounted: function() {
+    var self = this
+    eventBus.$on('correct', function() {
+      self.classCss = { correct: true, incorrect: false }
+    })
+
+    eventBus.$on('incorrect', function() {
+      self.classCss = { correct: false, incorrect: true }
+    })
+  },
+  template: '<div class="result" v-bind:class="classCss"></div>'
+})
+
+Vue.component('last-answer', {
+  data: function() {
+    return {
+      answer: '?'
+    }
+  },
+  mounted: function() {
+    var self = this
+    eventBus.$on('correct', function(hangul) {
+      self.answer = hangul
+    })
+    eventBus.$on('incorrect', function(hangul) {
+      self.answer = hangul
+    })
+  },
+  template: '<div class="centered">{{answer}}</div>'
+})
+
+Vue.component('answer-buttons', {
+  props: ['kcombo', 'method'],
+  methods: {
+    playAudio: function() {
+      var c = kconst[this.kcombo.codePointAt(0)]
+      var v = kvowel[this.kcombo.codePointAt(1)]
+      eventBus.$emit('play', c + v);
+    },
+    isRightSyllable: function() {
+      if (this.kcombo === eventBus.hangul) {
+        eventBus.$emit('correct', eventBus.hangul)
+      } else {
+        eventBus.$emit('incorrect', eventBus.hangul)
+      }
+    },
+    exec: function() {
+      this[this.method]()
+    }
+  },
+  mounted: function() {
+  },
+  template: '<button v-on:click="exec">{{kcombo}}</button>'
+})
+
+Vue.component('score', {
+  data: function() {
+    return {
+      correct: 0,
+      incorrect: 0
+    }
+  },
+  computed: {
+    perc: function() {
+      var tot = (this.incorrect + this.correct)
+      return (tot > 0 ? (this.correct / tot) : 0).toFixed(2)
+    }
+  },
+  mounted: function() {
+    var self = this
+    eventBus.$on('correct', function() {
+      self.correct++
+    })
+    eventBus.$on('incorrect', function() {
+      self.incorrect++
+    })
+    eventBus.$on('updatescore', function(correct, incorrect) {
+      self.correct = correct
+      self.incorrect = incorrect
+
+    })
+  },
+  template: '<div class="score">{{correct}}/{{correct+incorrect}} ({{perc}}%)</div>'
+})
+
+Vue.component('dropdown-item', {
+  props: ['item', 'open'],
+  computed: {
+    activePage: function() {
+      return eventBus.route === this.item[0]
+    }
+  },
+  mounted: function() {
+    var self = this
+    eventBus.$on('route', function(url) {
+      eventBus.route = url
+    })
+  },
+  methods: {
+    loadurl: function(e) {
+      if (e.target.className.indexOf('active') === -1) {
+        eventBus.$emit('route', this.item[0])
+      }
+    }
+  },
+  template: '<div class="label" v-on:click="loadurl" v-bind:class="{ active: activePage }">{{item[1]}}</div>'
+})
+
+Vue.component('dropdown', {
+  data: function() {
+    return {
+      open: false,
+      currentRoute: ''
+    }
+  },
+  props: ['items'],
+  methods: {
+    toggle: function() {
+      this.open = !this.open
+    }
+  },
+  mounted: function() {
+  },
+  template: '<div class="dropdown" v-on:taphold="toggle" v-on:click="toggle" v-bind:items="items" v-bind:class="{ active: open }"> \
+    <dropdown-item v-for="item in items" v-bind:item="item"></dropdown-item> \
+  </div>'
+})
+
+var lq = Vue.component('template-listen-quiz', {
+  template: '#listen-quiz-template',
+  props: ['kcomboKeys'],
+  data: function() {
+    return {
+      currentView: 'template-listen-quiz',
+      kcombo: kcombo,
+      // kcomboKeys: Object.keys(kcombo),
+      currentSyllable: null,
+      result: null,
+    }
+  },
+  created: function() {
+    this.currentSyllable = pickOne(this.kcomboKeys)
+  }
+})
+
+var sb = Vue.component('template-soundboard', {
+  template: '#soundboard-template',
+  props: ['kcomboKeys']
+})
+
+var dropdown = new Vue({
+  el: '#dropdown',
+  data: {
+    items: [['template-soundboard', 'Sound Board'], ['template-listen-quiz', 'Listen Quiz']],
+  }
+})
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    currentView: 'template-listen-quiz',
+    kcombo: kcombo,
+    kcomboKeys: Object.keys(kcombo),
+    currentSyllable: null,
+    result: null,
+  },
+  created: function() {
+    var self = this
+    eventBus.$on('route', function(url) {
+      self.currentView = url
+    })
+    this.$nextTick(function() {
+      eventBus.$emit('route', 'template-soundboard')
+    })
+  },
+  methods: {
+    changeView: function(template) {
+      this.currentView = template
+    }
+  }
+})
+

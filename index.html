@@ -5,24 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="style.css?ver=3.0.3">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="build/vendor/vue.js"></script>
   </head>
+  <script type="text/x-template" id="listen-quiz-template">
+    <div>
+      <div class="title">HANGUL</div>
+
+      <div class="styling">
+        <result-item></result-item>
+        <last-answer></last-answer>
+        <play-button></play-button>
+        <clear-button></clear-button>
+      </div>
+
+      <div class="answer" id="answers">
+        <answer-buttons v-bind:method="'isRightSyllable'" v-for="kcombo in kcomboKeys" v-bind:kcombo="kcombo"></answer-buttons>
+      </div>
+
+      <score id="score"></score>
+      <!-- <dropdown v-bind:items="items"></dropdown> -->
+      <!-- <audio-player></audio-player> -->
+    </div>
+  </script>
+
+  <script type="text/x-template" id="soundboard-template">
+    <div>
+      <div id="soundboard" slot="soundboard">
+        <div class="title">Hangul Soundboard</div>
+        <div class="answer" id="answers">
+          <answer-buttons v-bind:method="'playAudio'" v-for="kcombo in kcomboKeys" v-bind:kcombo="kcombo"></answer-buttons>
+        </div>
+
+
+      </div>
+    </div>
+  </script>
 
   <body>
-    <div class="title">HANGUL</div>
-
-    <div class="styling">
-      <div class="result"></div>
-      <div class="centered">?</div>
-      <button id="play-button">Play</button>
-      <button class="clear">Clear Score</button>
+    <div id="app" :kcombo-keys="kcomboKeys">
+      <component :is="currentView" :kcombo-keys="kcomboKeys"></component>
+      <audio-player></audio-player>
     </div>
 
-    <div class="answer"></div>
-    <div class="score">0/0 (0%)</div>
-    <audio>
-      <source src="" type="audio/mpeg">
-    </audio>
+    <div id="dropdown">
+      <dropdown v-bind:items="items"></dropdown>
+    </div>
+
   </body>
   <script src="js.js"></script>
 </html>
